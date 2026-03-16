@@ -16,7 +16,7 @@ from classificadores import (
 )
 
 
-def carregar_dados_classificacao(filepath="EMGDataset.csv"):
+def carregar_dados_classificacao(filepath="EMGsDataset.csv"):
     """Carrega o dataset EMG."""
     data = pd.read_csv(filepath, header=None).values
 
@@ -48,7 +48,7 @@ def executar_classificacao():
     print("=" * 70)
 
     # --- 1. Carregar e organizar dados ---
-    x1, x2, labels = carregar_dados_classificacao("EMGDataset.csv")
+    x1, x2, labels = carregar_dados_classificacao("EMGsDataset.csv")
     N = len(labels)
     C = 5
     p = 2

@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Verificar se arquivos existem
     arquivo_regressao = "aerogerador.dat"
-    arquivo_classificacao = "EMGDataset.csv"
+    arquivo_classificacao = "EMGsDataset.csv"
 
     if not os.path.exists(arquivo_regressao):
         print(f"\n⚠️  ATENÇÃO: Arquivo '{arquivo_regressao}' não encontrado!")

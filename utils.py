@@ -2,7 +2,6 @@ import numpy as np
 
 
 def train_test_split_manual(X, y, train_ratio=0.8):
-    """Particiona dados em treino e teste aleatoriamente."""
     N = X.shape[0]
     indices = np.random.permutation(N)
     n_train = int(N * train_ratio)
@@ -12,26 +11,22 @@ def train_test_split_manual(X, y, train_ratio=0.8):
 
 
 def mse(y_true, y_pred):
-    """Erro Quadrático Médio."""
     return np.mean((y_true - y_pred) ** 2)
 
 
 def r2_score(y_true, y_pred):
-    """Coeficiente de determinação R²."""
     ss_res = np.sum((y_true - y_pred) ** 2)
     ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
     return 1 - (ss_res / ss_tot)
 
 
 def acuracia(y_true, y_pred):
-    """Calcula a taxa de acerto."""
     return np.mean(y_true == y_pred)
 
 
 def one_hot_encode(labels, C):
-    """Converte vetor de labels em one-hot encoding."""
     N = len(labels)
     Y = np.zeros((N, C))
     for i, l in enumerate(labels):
-        Y[i, l - 1] = 1  # labels de 1 a C
+        Y[i, l - 1] = 1
     return Y

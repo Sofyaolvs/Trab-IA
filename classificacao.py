@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 from utils import acuracia, one_hot_encode
@@ -18,7 +17,7 @@ from classificadores import (
 
 def carregar_dados_classificacao(filepath="EMGsDataset.csv"):
     """Carrega o dataset EMG."""
-    data = pd.read_csv(filepath, header=None).values
+    data = np.genfromtxt(filepath, delimiter=',')
 
     if data.shape[0] == 3:
         x1 = data[0, :]

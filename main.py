@@ -5,6 +5,7 @@ warnings.filterwarnings('ignore')
 from regressao import executar_regressao
 from classificacao import executar_classificacao
 
+# cria a pasta pra salvar os graficos
 os.makedirs("resultados", exist_ok=True)
 
 if __name__ == "__main__":
@@ -16,6 +17,7 @@ if __name__ == "__main__":
     arquivo_regressao = "aerogerador.dat"
     arquivo_classificacao = "EMGsDataset.csv"
 
+    # verifica se o arquivo existe antes de rodar
     if not os.path.exists(arquivo_regressao):
         print(f"\nATENCAO: Arquivo '{arquivo_regressao}' nao encontrado!")
         print(f"   Coloque o arquivo na pasta: {os.getcwd()}")

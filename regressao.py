@@ -5,6 +5,7 @@ from utils import train_test_split_manual, mse, r2_score
 from regressores import mqo_tradicional, mqo_regularizado, modelo_media, predizer
 
 
+# le o arquivo do aerogerador e retorna velocidade (x) e potencia (y)
 def carregar_dados_regressao(filepath="aerogerador.dat"):
     try:
         data = np.loadtxt(filepath)
@@ -30,6 +31,7 @@ def executar_regressao():
     print(f"Velocidade do vento: min={x_raw.min():.2f}, max={x_raw.max():.2f}")
     print(f"Potencia gerada: min={y_raw.min():.2f}, max={y_raw.max():.2f}")
 
+    # grafico de espalhamento dos dados brutos
     plt.figure(figsize=(10, 6))
     plt.scatter(x_raw, y_raw, alpha=0.5, s=15, color='steelblue')
     plt.xlabel("Velocidade do Vento", fontsize=12)
@@ -41,17 +43,20 @@ def executar_regressao():
     plt.close()
     print("Grafico de espalhamento salvo.")
 
+    # monta a matriz X com coluna de 1s (bias) e os valores de x
     X = np.column_stack([np.ones(N), x_raw])
     y = y_raw.reshape(-1, 1)
     print(f"\nMatriz X: {X.shape}")
     print(f"Vetor y: {y.shape}")
 
+    # lambdas pra testar na regularizacao
     lambdas = [0, 0.25, 0.5, 0.75, 1.0]
     nomes_modelos = ["Media da var. dependente", "MQO Tradicional"]
     nomes_modelos += [f"MQO Regularizado (l={l})" for l in lambdas]
 
     n_modelos = len(nomes_modelos)
 
+    # 500 rodadas de random subsampling
     R = 500
     resultados_mse = np.zeros((R, n_modelos))
     resultados_r2 = np.zeros((R, n_modelos))
@@ -61,22 +66,26 @@ def executar_regressao():
     for r in range(R):
         X_train, X_test, y_train, y_test = train_test_split_manual(X, y)
 
+        # modelo da media: preve tudo como a media do treino
         media_val = modelo_media(y_train)
         y_pred_media = np.full_like(y_test, media_val)
         resultados_mse[r, 0] = mse(y_test, y_pred_media)
         resultados_r2[r, 0] = r2_score(y_test, y_pred_media)
 
+        # MQO tradicional
         beta_mqo = mqo_tradicional(X_train, y_train)
         y_pred_mqo = predizer(X_test, beta_mqo)
         resultados_mse[r, 1] = mse(y_test, y_pred_mqo)
         resultados_r2[r, 1] = r2_score(y_test, y_pred_mqo)
 
+        # MQO regularizado pra cada lambda
         for i, lambd in enumerate(lambdas):
             beta_reg = mqo_regularizado(X_train, y_train, lambd)
             y_pred_reg = predizer(X_test, beta_reg)
             resultados_mse[r, 2 + i] = mse(y_test, y_pred_reg)
             resultados_r2[r, 2 + i] = r2_score(y_test, y_pred_reg)
 
+    # printa tabela de MSE
     print("\n" + "=" * 90)
     print("RESULTADOS DA REGRESSAO - MSE")
     print("=" * 90)
@@ -92,6 +101,7 @@ def executar_regressao():
         print(f"{nome:<35} {media:>12.4f} {std:>15.4f} {maior:>12.4f} {menor:>12.4f}")
         tabela_mse.append([nome, media, std, maior, menor])
 
+    # printa tabela de R2
     print("\n" + "=" * 90)
     print("RESULTADOS DA REGRESSAO - R2")
     print("=" * 90)
@@ -107,6 +117,7 @@ def executar_regressao():
         print(f"{nome:<35} {media:>12.4f} {std:>15.4f} {maior:>12.4f} {menor:>12.4f}")
         tabela_r2.append([nome, media, std, maior, menor])
 
+    # boxplots comparando MSE e R2 de todos os modelos
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
     bp1 = axes[0].boxplot([resultados_mse[:, i] for i in range(n_modelos)],
@@ -138,6 +149,7 @@ def executar_regressao():
     plt.close()
     print("\nBoxplots salvos.")
 
+    # graficos de barras com media e desvio padrao
     fig, axes = plt.subplots(1, 2, figsize=(16, 6))
 
     medias_mse = [np.mean(resultados_mse[:, i]) for i in range(n_modelos)]
@@ -167,6 +179,7 @@ def executar_regressao():
     plt.close()
     print("Graficos de barras salvos.")
 
+    # grafico mostrando a reta do MQO e a media sobre os dados
     plt.figure(figsize=(10, 6))
     plt.scatter(x_raw, y_raw, alpha=0.4, s=10, color='steelblue', label='Dados')
 
